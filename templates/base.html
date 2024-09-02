@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='logo-novo.png') }}">
+    <title>{% block title %}Planejador Financeiro{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <!-- jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <style>
+        .select2-container .select2-selection--single {
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: calc(1.5em + .75rem + 2px);
+            right: 5px;
+        }
+        .header-color {
+            background-color: black; /* Fundo preto */
+            height: 100px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header-logo {
+            max-height: 90px;
+        }
+        body {
+            padding-top: 100px;
+        }
+        .footer {
+            height: 50px;
+            background-color: #ffffff;
+        }
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .flex-item {
+            display: flex;
+            align-items: center;
+        }
+        .form-check-label {
+            margin-left: 8px;
+        }
+        .flash-messages {
+            margin-top: 20px;
+        }
+        .logout-link {
+            color: rgb(255, 255, 255);
+        }
+        .logout-link:hover {
+            text-decoration: underline;
+            color: rgb(255, 0, 0);
+        }
+        .active-user {
+            text-align: right;
+            padding-right: 45px;
+            max-height: 0px;
+            margin-top: -20px;
+            color: white;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-color">
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logotipo" class="header-logo">
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer class="footer">
+        <!-- Conteúdo do rodapé, se necessário -->
+    </footer>
+
+    <!-- Scripts do Bootstrap e outros scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Adicione outros scripts aqui -->
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

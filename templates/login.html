@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% macro make_fields(field) %}
+    {% if field.type == 'CSRFTokenField' %}
+        {{ field() }}  {# Renderiza o campo CSRF como um campo oculto #}
+    {% elif field.type != 'HiddenField' %}
+        <div class="mb-3">
+            {{ field.label(class_="form-label") }}
+            {% if field.type == 'TextAreaField' %}
+                {{ field(class_="form-control" + (" is-invalid" if field.errors else "")) }}
+            {% elif field.type == 'FileField' %}
+                <div class="custom-file">
+                    {{ field(class_="custom-file-input" + (" is-invalid" if field.errors else ""), id="file-input") }}
+                    <label class="custom-file-label" for="file-input" id="file-label">Escolher arquivo</label>
+                    {% if field.errors %}
+                        <div class="invalid-feedback" style="display: block;">
+                            {{ field.errors|first }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                {{ field(class_="form-control" + (" is-invalid" if field.errors else "")) }}
+            {% endif %}
+            {% if field.errors and field.type != 'FileField' %}
+                <div class="invalid-feedback" style="display: block;">
+                    {{ field.errors|first }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+{% block content %}
+<style>
+    .center-screen {
+        margin-top: -80px;
+    }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .card-header {
+        background-color: #343a40; /* Tom mais escuro para destacar */
+        border-radius: 15px 15px 0 0;
+        height: 40px; /* Altura maior para aumentar a espessura */
+    }
+    .btn-custom {
+        background-color: #343a40; /* Tom mais escuro */
+        border-radius: 50px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-custom:hover {
+        background-color: #23272b;
+    }
+    .form-control {
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease;
+    }
+    .form-control:focus {
+        box-shadow: 0 0 5px rgba(52, 58, 64, 0.8);
+    }
+    .modal-content {
+        border-radius: 15px;
+    }
+    .modal-header {
+        border-bottom: none;
+    }
+    .close {
+        outline: none;
+    }
+    .modal-footer {
+        border-top: none;
+    }
+</style>
+<div class="center-screen">
+    <div class="vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-white text-center">
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('login') }}">
+                        {{ form.hidden_tag() }}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        <div class="form-group mt-4">
+                            <label class="form-control-label">
+                                {{ form.username.label.text }}
+                                <a href="#" data-toggle="modal" data-target="#usernameModal">
+                                    <i class="fas fa-info-circle" style="color: gray;"></i> <!-- Ícone cinza -->
+                                </a>
+                            </label>
+                            {{ form.username(class="form-control") }}
+                        </div>
+                        <div class="form-group mt-4">
+                            {{ form.password.label(class="form-control-label") }}
+                            {{ form.password(class="form-control") }}
+                        </div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-custom btn-block text-white" name="submit_login">Login</button>
+                        </div>
+                        <div class="form-group mt-4 text-center">
+                            <a href="#" data-toggle="modal" data-target="#esqueciSenhaModal"  style="color: #343a40;">Esqueci a senha</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="usernameModal" tabindex="-1" role="dialog" aria-labelledby="usernameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="usernameModalLabel">Informação do Nome de Usuário</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Seu nome de usuário é seu primeiro nome seguido do seu último nome.
+                <br>Exemplo: joao.silva
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="esqueciSenhaModal" tabindex="-1" role="dialog" aria-labelledby="esqueciSenhaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="esqueciSenhaModalLabel">Esqueci a Senha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="usernameEsqueciSenha">Nome de usuário</label>
+                        <input type="text" class="form-control" id="usernameEsqueciSenha">
+                    </div>
+                </form>
+                <p>Será enviado um e-mail com as instruções para redefinição de senha.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-custom">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}
