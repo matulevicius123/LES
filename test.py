@@ -1,4 +1,15 @@
 import pytest
+from flask import Flask
 
-def test_always_passes():
-    assert 1 == 0
+# Create a simple Flask application for testing
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hello, World!'
+
+# A basic test function to check if the application is running
+def test_hello(client):
+    response = client.get('/')
+    assert response.data == b'Hello, World!'
+    assert response.status_code == 200
