@@ -1,5 +1,5 @@
 from flask import render_template
-from forms import LoginForm, PrimeiroAcessoForm  # Certifique-se de importar os formulários
+from forms import LoginForm, PrimeiroAcessoForm
 
 def init_routes(app):
     
