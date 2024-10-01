@@ -16,15 +16,15 @@ def client(app):
 def test_home(client):
     response = client.get('/')  # teste GET do home
     assert response.status_code == 200 
-    assert b'Home - Planejador Financeiro' in response.data  
-    assert b'Essa é a sua página inicial.' in response.data  
+    assert 'Home - Planejador Financeiro' in response.data.decode('utf-8')  
+    assert 'Essa é a sua página inicial.' in response.data.decode('utf-8')  
 
 
 # teste da pagina de login
 def test_login_get(client):
     response = client.get('/login')  # pedimos um GET para a rota de login
     assert response.status_code == 200  
-    assert b'Login' in response.data 
+    assert 'Login' in response.data.decode('utf-8') 
 
 
 # testando o metodo POST
