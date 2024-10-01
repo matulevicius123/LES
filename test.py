@@ -1,5 +1,4 @@
 # acessa o venv para executar o codigo
-source /var/jenkins_home/venv/bin/activate
 import pytest
 from app import app as create_app  
 
