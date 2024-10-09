@@ -40,4 +40,4 @@ def test_login_post_invalid(client):
         'password': 'wrongpassword'
     })  # Simula um POST com credenciais inválidas
     assert response.status_code == 200  # Verifica se a resposta é 200
-    assert b'Nome de usuário ou senha incorretos' in response.data  # Verifica se a mensagem de erro está presente
+    assert 'Nome de usuário ou senha incorretos' in response.data.decode('utf-8')  # Verifica se a mensagem de erro está presente
