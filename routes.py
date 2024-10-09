@@ -1,3 +1,4 @@
+import random
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 from models import User  # Importar o modelo de usuário
@@ -41,8 +42,10 @@ def init_routes(app):
                 flash('Usuário ou email já cadastrado.', 'danger')
             else:
                 # Criar novo usuário
-                hashed_password = generate_password_hash(form.password.data, method='sha256')
-                new_user = User(nome_completo=form.nome_completo.data,
+                hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+
+                new_user = User(
+                                id = random.randint(1, 1000),
                                 username=form.username.data,
                                 email=form.email.data,
                                 password=hashed_password)
