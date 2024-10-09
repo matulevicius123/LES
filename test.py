@@ -29,8 +29,12 @@ def test_login_post_invalid(client):
         'username': 'invalid_user',
         'password': 'invalid_password'
     })
-    assert response.status_code == 200
-    assert 'Nome de usuário ou senha incorretos' in response.data.decode('utf-8')  # Verifica a mensagem de erro
+    assert response.status_code == 200  # A página de login deve ser retornada
+    
+    # Verifica se a mensagem de erro está presente na resposta HTML
+    html_content = response.data.decode('utf-8')
+    assert 'Nome de usuário ou senha incorretos' in html_content  # Verifica se a mensagem de erro está presente no HTML
+
 
 def test_home_redirects_when_not_logged_in(client):
     response = client.get(url_for('home'))
