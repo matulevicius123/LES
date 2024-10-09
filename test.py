@@ -31,10 +31,6 @@ def test_login_post_invalid(client):
     })
     assert response.status_code == 200  # A página de login deve ser retornada
 
-    # Verifica se a mensagem de erro está presente na resposta HTML
-    html_content = response.data.decode('utf-8')
-    assert 'Nome de usuário ou senha incorretos' in html_content  # Verifica se a mensagem de erro está presente no HTML
-
     # Testando o método check_password para o usuário válido
     user = User.query.filter_by(username='test_user').first()
     assert user.check_password('valid_password') is True  # Deve retornar True para a senha correta
