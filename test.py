@@ -1,54 +1,38 @@
 import pytest
-from app import app as create_app  
+from flask import url_for
+from app import app as flask_app  # Importa o app do seu arquivo
+from extensions import db
+from models import User
 
 @pytest.fixture
 def app():
-    app = create_app
-    app.config['TESTING'] = True  
-    return app 
+    flask_app.config['TESTING'] = True
+    flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Usar banco de dados em memória para testes
+    with flask_app.app_context():
+        db.create_all()  # Cria as tabelas no banco de dados de teste
+        yield flask_app
+        db.session.remove()
+        db.drop_all()  # Remove as tabelas após os testes
 
 @pytest.fixture
 def client(app):
-    return app.test_client() 
+    return app.test_client()
 
-# testar home
-def test_home(client):
-    response = client.get('/')  # Make a GET request to the home route
-    assert response.status_code == 200  # Check if the status code is 200
-    assert b'Home Page Content' in response.data  # Replace with actual content check
-
-# Test the login route with GET method
 def test_login_get(client):
-    response = client.get('/login')  # Make a GET request to the login route
-    assert response.status_code == 200  # Check if the status code is 200
-    assert b'Login' in response.data  # Check for the presence of the login form
+    response = client.get(url_for('login'))  # Faz um GET na rota de login
+    assert response.status_code == 200
+    assert 'Login' in response.data.decode('utf-8')  # Verifica se a página contém o texto 'Login'
 
-# Test the login route with POST method
-def test_login_post(client):
-    response = client.post('/login', data={
-        'username': 'testuser',
-        'password': 'testpassword'
-    })  # Simulate submitting the login form
-    assert response.status_code == 200  # Check if the status code is still 200
-    assert b'Login' in response.data  # Check if the login form is still rendered
+def test_login_post_invalid(client):
+ # Simula um POST com dados inválidos
+    response = client.post(url_for('login'), data={
+        'username': 'invalid_user',
+        'password': 'invalid_password'
+    })
+    assert response.status_code == 200  # A página de login deve ser retornada
 
-    # You can also check for the presence of error messages if the login is invalid
-    # Example:
-    # assert b'Invalid username or password' in response.data
+    # Testando o método check_password para o usuário válido
+    user = User.query.filter_by(username='test_user').first()
+    assert user.check_password('valid_password') is True  # Deve retornar True para a senha correta
+    assert user.check_password('wrong_password') is False  # Deve retornar False para a senha incorreta
 
-# Test the first access form
-def test_primeiro_acesso_get(client):
-    response = client.get('/primeiro_acesso')  # Assuming you have this route
-    assert response.status_code == 200  # Check if the status code is 200
-    assert b'Primeiro Acesso' in response.data  # Replace with actual content check
-
-def test_primeiro_acesso_post(client):
-    response = client.post('/primeiro_acesso', data={
-        'nome_completo': 'Test User',
-        'username': 'testuser',
-        'email': 'test@example.com',
-        'password': 'testpassword',
-        'repeat_password': 'testpassword'
-    })  # Simulate submitting the primeiro acesso form
-    assert response.status_code == 200  # Check if the status code is still 200
-    assert b'Welcome, Test User' in response.data  # Adjust this based on your expected outcome

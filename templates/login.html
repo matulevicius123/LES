@@ -28,6 +28,7 @@
         </div>
     {% endif %}
 {% endmacro %}
+
 {% block content %}
 <style>
     .center-screen {
@@ -70,6 +71,7 @@
         border-top: none;
     }
 </style>
+
 <div class="center-screen">
     <div class="vh-100 d-flex justify-content-center align-items-center">
         <div class="col-md-6">
@@ -97,6 +99,9 @@
                             <button type="submit" class="btn btn-custom btn-block text-white" name="submit_login">Login</button>
                         </div>
                         <div class="form-group mt-4 text-center">
+                            <a href="{{ url_for('primeiro_acesso') }}" class="btn btn-link" style="color: #343a40;">Primeiro Acesso</a>
+                        </div>
+                        <div class="form-group mt-4 text-center">
                             <a href="#" data-toggle="modal" data-target="#esqueciSenhaModal"  style="color: #343a40;">Esqueci a senha</a>
                         </div>
                     </form>
@@ -105,6 +110,8 @@
         </div>
     </div>
 </div>
+
+<!-- Modals for Username Information and Password Reset -->
 <div class="modal fade" id="usernameModal" tabindex="-1" role="dialog" aria-labelledby="usernameModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -151,6 +158,7 @@
     </div>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
