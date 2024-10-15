@@ -6,13 +6,14 @@ from models import User
 
 @pytest.fixture
 def app():
-    flask_app.config['TESTING'] = True
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Usar banco de dados em memória para testes
-    with flask_app.app_context():
-        db.create_all()  # Cria as tabelas no banco de dados de teste
-        yield flask_app
-        db.session.remove()
-        db.drop_all()  # Remove as tabelas após os testes
+    print('')
+    # flask_app.config['TESTING'] = True
+    # flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Usar banco de dados em memória para testes
+    # with flask_app.app_context():
+    #     db.create_all()  # Cria as tabelas no banco de dados de teste
+    #     yield flask_app
+    #     db.session.remove()
+    #     db.drop_all()  # Remove as tabelas após os testes
 
 @pytest.fixture
 def client(app):
