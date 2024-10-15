@@ -45,14 +45,13 @@ def init_routes(app):
                 hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
 
                 new_user = User(
-                                id = random.randint(1, 1000),
                                 username=form.username.data,
                                 email=form.email.data,
                                 password=hashed_password)
                 db.session.add(new_user)
                 db.session.commit()
 
-                flash('Conta criada com sucesso! Faça o login.', 'success')
+                flash('Conta criada com sucesso!', 'success')
                 return redirect(url_for('login'))
 
         return render_template('primeiro_acesso.html', form=form)
@@ -66,4 +65,4 @@ def init_routes(app):
     @app.route('/')
     @login_required
     def home():
-        return 'Você está logado!'
+        return render_template('home.html')  # Renderiza o template da página inicial
