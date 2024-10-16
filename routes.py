@@ -63,7 +63,6 @@ def init_routes(app):
         return redirect(url_for('login'))
 
     @app.route('/')
-    @login_required
     def home():
         return render_template('home.html')  # Renderiza o template da página inicial
 
