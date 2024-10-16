@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Cadastro Inicial</h2>
+    <form method="POST" action="{{ url_for('cadastro') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.nome_completo.label(class="form-label") }}
+            {{ form.nome_completo(class="form-control", placeholder="Digite seu nome completo") }}
+            {% if form.nome_completo.errors %}
+                <div class="text-danger">
+                    {% for error in form.nome_completo.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+
+        <div class="form-group">
+            {{ form.idade.label(class="form-label") }}
+            {{ form.idade(class="form-control", placeholder="Digite sua idade") }}
+            {% if form.idade.errors %}
+                <div class="text-danger">
+                    {% for error in form.idade.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.renda_mensal.label(class="form-label") }}
+            {{ form.renda_mensal(class="form-control", placeholder="Digite sua renda mensal", id="renda_mensal") }}
+            {% if form.renda_mensal.errors %}
+                <div class="text-danger">
+                    {% for error in form.renda_mensal.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.despesas_mensais.label(class="form-label") }}
+            {{ form.despesas_mensais(class="form-control", placeholder="Digite suas despesas mensais", id="despesas_mensais") }}
+            {% if form.despesas_mensais.errors %}
+                <div class="text-danger">
+                    {% for error in form.despesas_mensais.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.patrimonio_atual.label(class="form-label") }}
+            {{ form.patrimonio_atual(class="form-control", placeholder="Digite seu patrimônio atual", id="patrimonio_atual") }}
+            {% if form.patrimonio_atual.errors %}
+                <div class="text-danger">
+                    {% for error in form.patrimonio_atual.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.idade_desejada_aposentadoria.label(class="form-label") }}
+            {{ form.idade_desejada_aposentadoria(class="form-control", placeholder="Digite a idade desejada para aposentadoria", id="idade_desejada_aposentadoria") }}
+            {% if form.idade_desejada_aposentadoria.errors %}
+                <div class="text-danger">
+                    {% for error in form.idade_desejada_aposentadoria.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.renda_desejada_aposentadoria.label(class="form-label") }}
+            {{ form.renda_desejada_aposentadoria(class="form-control", placeholder="Digite a renda desejada para aposentadoria", id="renda_desejada_aposentadoria") }}
+            {% if form.renda_desejada_aposentadoria.errors %}
+                <div class="text-danger">
+                    {% for error in form.renda_desejada_aposentadoria.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.tolerancia_risco.label(class="form-label") }}
+            {{ form.tolerancia_risco(class="form-control") }}
+            {% if form.tolerancia_risco.errors %}
+                <div class="text-danger">
+                    {% for error in form.tolerancia_risco.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.horizonte_investimentos.label(class="form-label") }}
+            {{ form.horizonte_investimentos(class="form-control") }}
+            {% if form.horizonte_investimentos.errors %}
+                <div class="text-danger">
+                    {% for error in form.horizonte_investimentos.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary", style="width: 100%; background-color: black;") }}
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Função que formata o valor no formato R$ 0,00
+    function formatCurrency(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        value = (value / 100).toFixed(2) + ''; // Divide por 100 para adicionar as casas decimais
+        value = value.replace('.', ','); // Substitui o ponto por vírgula
+        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'); // Adiciona os pontos separadores de milhar
+        input.value = 'R$ ' + value; // Adiciona o símbolo de R$
+    }
+
+    // Aplica o formato a todos os inputs conforme o usuário digita
+    $(document).ready(function() {
+        $('#renda_mensal, #despesas_mensais, #patrimonio_atual, #renda_desejada_aposentadoria').on('input', function() {
+            formatCurrency(this);
+        });
+    });
+</script>
+{% endblock %}
