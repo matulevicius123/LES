@@ -1,14 +1,16 @@
+<!-- simulador_aposentadoria.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="container">
-    <h2>Cadastro Inicial</h2>
-    <form method="POST" action="{{ url_for('cadastro') }}">
+    <h2 class="my-4">Simulador de Aposentadoria</h2>
+    <form method="POST" action="{{ url_for('simulador_aposentadoria') }}">
         {{ form.hidden_tag() }}
 
+        <!-- Nome Completo (Readonly) -->
         <div class="form-group">
             {{ form.nome_completo.label(class="form-label") }}
-            {{ form.nome_completo(class="form-control", placeholder="Digite seu nome de usuário") }}
+            {{ form.nome_completo(class="form-control", placeholder="Seu nome completo", readonly=True) }}
             {% if form.nome_completo.errors %}
                 <div class="text-danger">
                     {% for error in form.nome_completo.errors %}
@@ -18,7 +20,7 @@
             {% endif %}
         </div>
 
-
+        <!-- Idade -->
         <div class="form-group">
             {{ form.idade.label(class="form-label") }}
             {{ form.idade(class="form-control", placeholder="Digite sua idade") }}
@@ -31,6 +33,7 @@
             {% endif %}
         </div>
 
+        <!-- Renda Mensal -->
         <div class="form-group">
             {{ form.renda_mensal.label(class="form-label") }}
             {{ form.renda_mensal(class="form-control", placeholder="Digite sua renda mensal", id="renda_mensal") }}
@@ -43,6 +46,7 @@
             {% endif %}
         </div>
 
+        <!-- Despesas Mensais -->
         <div class="form-group">
             {{ form.despesas_mensais.label(class="form-label") }}
             {{ form.despesas_mensais(class="form-control", placeholder="Digite suas despesas mensais", id="despesas_mensais") }}
@@ -55,6 +59,7 @@
             {% endif %}
         </div>
 
+        <!-- Patrimônio Atual -->
         <div class="form-group">
             {{ form.patrimonio_atual.label(class="form-label") }}
             {{ form.patrimonio_atual(class="form-control", placeholder="Digite seu patrimônio atual", id="patrimonio_atual") }}
@@ -67,6 +72,7 @@
             {% endif %}
         </div>
 
+        <!-- Idade Desejada para Aposentadoria -->
         <div class="form-group">
             {{ form.idade_desejada_aposentadoria.label(class="form-label") }}
             {{ form.idade_desejada_aposentadoria(class="form-control", placeholder="Digite a idade desejada para aposentadoria", id="idade_desejada_aposentadoria") }}
@@ -79,6 +85,7 @@
             {% endif %}
         </div>
 
+        <!-- Renda Mensal Desejada na Aposentadoria -->
         <div class="form-group">
             {{ form.renda_desejada_aposentadoria.label(class="form-label") }}
             {{ form.renda_desejada_aposentadoria(class="form-control", placeholder="Digite a renda desejada para aposentadoria", id="renda_desejada_aposentadoria") }}
@@ -91,6 +98,7 @@
             {% endif %}
         </div>
 
+        <!-- Tolerância ao Risco -->
         <div class="form-group">
             {{ form.tolerancia_risco.label(class="form-label") }}
             {{ form.tolerancia_risco(class="form-control") }}
@@ -103,6 +111,7 @@
             {% endif %}
         </div>
 
+        <!-- Horizonte de Investimento -->
         <div class="form-group">
             {{ form.horizonte_investimentos.label(class="form-label") }}
             {{ form.horizonte_investimentos(class="form-control") }}
@@ -115,26 +124,47 @@
             {% endif %}
         </div>
 
-        <div class="form-group">
+        <!-- Botão de Submissão -->
+        <div class="form-group mt-3">
             {{ form.submit(class="btn btn-primary", style="width: 100%; background-color: black;") }}
         </div>
     </form>
+    
+    <!-- Mensagens Flash -->
+
 </div>
 
+<!-- Inclusão do jQuery (necessário para o script de formatação) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // Função que formata o valor no formato R$ 0,00
     function formatCurrency(input) {
         let value = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        if (value.length === 0) {
+            input.value = '';
+            return;
+        }
         value = (value / 100).toFixed(2) + ''; // Divide por 100 para adicionar as casas decimais
         value = value.replace('.', ','); // Substitui o ponto por vírgula
         value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'); // Adiciona os pontos separadores de milhar
         input.value = 'R$ ' + value; // Adiciona o símbolo de R$
     }
 
+    // Função que remove formatação de moeda para obter valor numérico
+    function unformatCurrency(input) {
+        let value = input.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+        return parseFloat(value) / 100;
+    }
+
     // Aplica o formato a todos os inputs conforme o usuário digita
     $(document).ready(function() {
+        // Formatação durante a digitação
         $('#renda_mensal, #despesas_mensais, #patrimonio_atual, #renda_desejada_aposentadoria').on('input', function() {
+            formatCurrency(this);
+        });
+
+        // Formatação ao carregar a página
+        $('#renda_mensal, #despesas_mensais, #patrimonio_atual, #renda_desejada_aposentadoria').each(function() {
             formatCurrency(this);
         });
     });

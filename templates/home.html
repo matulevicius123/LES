@@ -1,8 +1,10 @@
-{% extends 'base.html' %}
-
-{% block title %}Home - Planejador Financeiro{% endblock %}
+<!-- home.html -->
+{% extends "base.html" %}
 
 {% block content %}
-    <h2>Bem-vindo ao Planejador Financeiro</h2>
-    <p>Essa é a sua página inicial.</p>
+    <h1>Bem-vindo, {{ current_user.username }}!</h1>
+
+    <!-- Botão para acessar o simulador de aposentadoria -->
+    <a href="{{ url_for('simulador_aposentadoria') }}" class="btn btn-primary W-100">Simular Aposentadoria</a>
 {% endblock %}
+

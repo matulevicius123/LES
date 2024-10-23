@@ -16,7 +16,7 @@ class PrimeiroAcessoForm(FlaskForm):
 
 class CadastroInicialForm(FlaskForm):
     # Informações Pessoais
-    nome_completo = StringField('Nome Completo', validators=[DataRequired()])
+    nome_completo = StringField('Username', validators=[DataRequired()])
     idade = IntegerField('Idade', validators=[DataRequired(), NumberRange(min=18, max=100)])
 
     # Informações Financeiras
