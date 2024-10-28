@@ -173,16 +173,14 @@ def init_routes(app):
             horizonte_investimentos=cadastro.horizonte_investimentos
         )
         
+        feedback = None  # Inicializa a variável feedback
+
         if form.validate_on_submit():
             # Limpar os valores monetários usando a função de formatação
             renda_mensal = format_currency(form.renda_mensal.data)
             despesas_mensais = format_currency(form.despesas_mensais.data)
             patrimonio_atual = format_currency(form.patrimonio_atual.data)
             renda_desejada_aposentadoria = format_currency(form.renda_desejada_aposentadoria.data)
-            print(f"Renda Mensal: {renda_mensal}")
-            print(f"Despesas Mensais: {despesas_mensais}")
-            print(f"Patrimônio Atual: {patrimonio_atual}")
-            print(f"Renda Desejada na Aposentadoria: {renda_desejada_aposentadoria}")
             
             idade_atual = form.idade.data
             idade_aposentadoria = form.idade_desejada_aposentadoria.data
@@ -190,7 +188,7 @@ def init_routes(app):
             rentabilidade_mensal = 0.005  # 0,5% ao mês
             
             # Cálculo do quanto a pessoa precisa poupar por mês, considerando o patrimônio atual
-            poupanca_mensal, valor_a_ser_acumulado, valor_necessario_aposentadoria = calcular_poupanca_mensal_com_patrimonio(
+            poupanca_mensal, valor_a_ser_acumulado, valor_necessario_aposentadoria, patrimonio_futuro = calcular_poupanca_mensal_com_patrimonio(
                 idade_atual, 
                 idade_aposentadoria, 
                 renda_desejada_aposentadoria, 
@@ -198,27 +196,63 @@ def init_routes(app):
                 rentabilidade_mensal, 
                 patrimonio_atual
             )
-            print(f"Poupança Mensal Calculada: {poupanca_mensal}")
-            print(f"Valor Necessário na Aposentadoria: {valor_necessario_aposentadoria}")
             
             # Formatação dos valores para exibição
             poupanca_mensal_formatada = format_brl(poupanca_mensal)
             valor_necessario_formatado = format_brl(valor_necessario_aposentadoria)
+            patrimonio_futuro_formatado = format_brl(patrimonio_futuro)
+            valor_a_ser_acumulado_formatado = format_brl(valor_a_ser_acumulado)
             
-            # Verifica se a renda atual está compatível com a aposentadoria desejada
-            if renda_mensal - despesas_mensais < poupanca_mensal:
-                feedback = (
-                    f"Sua renda mensal de {format_brl(renda_mensal)} menos suas despesas de {format_brl(despesas_mensais)} "
-                    f"não permite poupar o suficiente para atingir sua renda desejada de {format_brl(renda_desejada_aposentadoria)} "
-                    f"na aposentadoria. Você precisaria poupar {poupanca_mensal_formatada} por mês, aumentando essa poupança anualmente conforme a inflação."
-                )
-            else:
-                feedback = (
-                    f"Com sua renda atual e despesas, você pode atingir sua renda desejada de {format_brl(renda_desejada_aposentadoria)} "
-                    f"na aposentadoria. Você precisa guardar {poupanca_mensal_formatada} por mês, aumentando essa poupança anualmente conforme a inflação, "
+            # Cálculo da renda disponível para poupança
+            renda_disponivel = renda_mensal - despesas_mensais
+            renda_disponivel_formatada = format_brl(renda_disponivel)
+            
+            # Determinação da viabilidade baseada na renda disponível
+            if renda_disponivel >= poupanca_mensal:
+                viabilidade = "Viável"
+                recomendacao = (
+                    "Com sua renda atual e despesas, você pode atingir sua renda desejada na aposentadoria. "
+                    f"Você precisa guardar R$ {poupanca_mensal_formatada} por mês, aumentando essa poupança anualmente conforme a inflação, "
                     f"até a idade de {idade_aposentadoria} para acumular o valor necessário de {valor_necessario_formatado}."
                 )
+            else:
+                viabilidade = "Não Viável"
+                recomendacao = (
+                    f"Considerando sua renda disponível de {renda_disponivel_formatada} não permite poupar o suficiente para atingir sua renda desejada de "
+                    f"{format_brl(renda_desejada_aposentadoria)} na aposentadoria. Você precisaria poupar R$ {poupanca_mensal_formatada} por mês."
+                )
+            
+            # Criação do relatório com todas as informações
+            feedback = {
+                'idade_atual': idade_atual,
+                'idade_aposentadoria': idade_aposentadoria,
+                'renda_mensal': format_brl(renda_mensal),
+                'despesas_mensais': format_brl(despesas_mensais),
+                'patrimonio_atual': format_brl(patrimonio_atual),
+                'patrimonio_futuro': patrimonio_futuro_formatado,
+                'renda_desejada_aposentadoria': format_brl(renda_desejada_aposentadoria),
+                'valor_necessario_aposentadoria': valor_necessario_formatado,
+                'valor_a_ser_acumulado': valor_a_ser_acumulado_formatado,
+                'poupanca_mensal': poupanca_mensal_formatada,
+                'viabilidade': viabilidade,
+                'recomendacao': recomendacao,
+                'renda_disponivel': renda_disponivel_formatada
+            }
 
-            flash(feedback, 'info')
+            # Atualizar o cadastro com os novos dados
+            cadastro.nome_completo = form.nome_completo.data
+            cadastro.idade = idade_atual
+            cadastro.renda_mensal = renda_mensal
+            cadastro.despesas_mensais = despesas_mensais
+            cadastro.patrimonio_atual = patrimonio_atual
+            cadastro.idade_desejada_aposentadoria = idade_aposentadoria
+            cadastro.renda_desejada_aposentadoria = renda_desejada_aposentadoria
+            cadastro.tolerancia_risco = form.tolerancia_risco.data
+            cadastro.horizonte_investimentos = form.horizonte_investimentos.data
 
-        return render_template('simulador_aposentadoria.html', form=form)
+            db.session.commit()
+
+            # Passar o feedback para o template
+            return render_template('simulador_aposentadoria.html', form=form, feedback=feedback)
+        
+        return render_template('simulador_aposentadoria.html', form=form, feedback=feedback)

@@ -1,4 +1,3 @@
-<!-- simulador_aposentadoria.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -6,6 +5,77 @@
     <h2 class="my-4">Simulador de Aposentadoria</h2>
     <form method="POST" action="{{ url_for('simulador_aposentadoria') }}">
         {{ form.hidden_tag() }}
+            <!-- Seção de Relatório de Feedback -->
+    {% if feedback %}
+    <div class="mt-5">
+        <h3>Relatório de Simulação</h3>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Resumo da Simulação</h5>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Idade Atual</th>
+                            <td>{{ feedback.idade_atual }} anos</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Idade Desejada para Aposentadoria</th>
+                            <td>{{ feedback.idade_aposentadoria }} anos</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Renda Mensal Atual</th>
+                            <td>{{ feedback.renda_mensal }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Despesas Mensais</th>
+                            <td>{{ feedback.despesas_mensais }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Renda Disponível para Poupança</th>
+                            <td>{{ feedback.renda_disponivel }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Patrimônio Atual</th>
+                            <td>{{ feedback.patrimonio_atual }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Patrimônio Futuro (ajustado pela rentabilidade)</th>
+                            <td>{{ feedback.patrimonio_futuro }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Renda Mensal Desejada na Aposentadoria</th>
+                            <td>{{ feedback.renda_desejada_aposentadoria }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Valor Necessário para a Aposentadoria</th>
+                            <td>{{ feedback.valor_necessario_aposentadoria }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Valor a Ser Acumulado</th>
+                            <td>{{ feedback.valor_a_ser_acumulado }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Poupança Mensal Necessária</th>
+                            <td>{{ feedback.poupanca_mensal }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Viabilidade da Aposentadoria</th>
+                            <td>
+                                {% if feedback.viabilidade == "Viável" %}
+                                    <span class="badge bg-success">{{ feedback.viabilidade }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ feedback.viabilidade }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h5>Recomendação</h5>
+                <p>{{ feedback.recomendacao }}</p>
+            </div>
+        </div>
+    </div>
+{% endif %}
 
         <!-- Nome Completo (Readonly) -->
         <div class="form-group">
@@ -130,8 +200,21 @@
         </div>
     </form>
     
-    <!-- Mensagens Flash -->
 
+    
+    <!-- Mensagens Flash (opcional) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 </div>
 
 <!-- Inclusão do jQuery (necessário para o script de formatação) -->
