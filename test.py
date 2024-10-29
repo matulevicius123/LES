@@ -35,6 +35,18 @@ def test_primeiro_acesso_post_valid(client):
     })
     print(User.query.all()) 
     print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
+
+        # Check if form validation failed
+    form = PrimeiroAcessoForm(data={
+        'username': 'usuario',
+        'email': 'novo_usuario@example.com',
+        'password': 'supersenha',
+        'repeat_password': 'supersenha'
+    })
+    
+    if not form.validate():
+        print(form.errors)  # Print form errors if validation fails
+        
     user = User.query.filter_by(username='usuario').first() 
     assert user is not None  # verificar se o usuario existe
 
