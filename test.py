@@ -41,7 +41,7 @@ def test_primeiro_acesso_post_valid(client):
     })
 
     #print(User.query.all()) 
-    #print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
+    print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
 
      # Check if form validation failed
     form = PrimeiroAcessoForm(data={
