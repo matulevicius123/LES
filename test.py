@@ -6,15 +6,6 @@ from models import User
 from models import CadastroInicial
 from forms import PrimeiroAcessoForm
 
-def extract_csrf_token(html):
-    # Find the start of the CSRF token
-    start = html.find('"hidden" value="') + len('"hidden" value="')
-    # Find the end of the CSRF token
-    end = html.find('"', start)
-    # Extract and return the CSRF token
-    return html[start:end]
-
-
 @pytest.fixture
 def app():
     with flask_app.app_context():
@@ -76,8 +67,8 @@ def test_login_com_conta_nova(client):
     })
     
     assert response.status_code == 200 
-    print("Login response status code:", response.status_code)
-    print("Login response data:", response.data.decode())
+    #print("Login response status code:", response.status_code)
+    #print("Login response data:", response.data.decode())
 
 def test_cadastro_valid(client):
     response = client.post(url_for('cadastro'), data={
@@ -92,6 +83,21 @@ def test_cadastro_valid(client):
         'horizonte_investimentos': 'Longo prazo'
     })
 
+    # Check if form validation passed
+    form = CadastroInicialForm(data={
+        'nome_completo': 'João da Silva',
+        'idade': 30,
+        'renda_mensal': '5000.00',
+        'despesas_mensais': '3000.00',
+        'patrimonio_atual': '10000.00',
+        'idade_desejada_aposentadoria': 60,
+        'renda_desejada_aposentadoria': '8000.00',
+        'tolerancia_risco': 'Alto',
+        'horizonte_investimentos': 'Longo prazo'
+    })
+
+    if not form.validate():
+        print("Form validation failed:", form.errors)
     assert response.status_code == 200 #procura um redirect
     assert CadastroInicial.query.count() == 1  
     cadastro = CadastroInicial.query.first()
