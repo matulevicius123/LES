@@ -3,6 +3,7 @@ from flask import url_for
 from testapp import testapp as flask_app  # Importa o app do seu arquivo
 from extensions import db
 from models import User
+from models import CadastroInicial
 from forms import PrimeiroAcessoForm
 
 def extract_csrf_token(html):
