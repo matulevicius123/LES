@@ -34,6 +34,7 @@ def test_primeiro_acesso_post_valid(client):
         'repeat_password': 'supersenha'
     })
     print(User.query.all()) 
+    print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
     user = User.query.filter_by(username='usuario').first() 
     assert user is not None  # verificar se o usuario existe
 
