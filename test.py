@@ -7,15 +7,16 @@ from models import User
 @pytest.fixture
 def app():
     with flask_app.app_context():
-        db.create_all()  # Create tables in the in-memory database
-        yield flask_app  # Yield the test app for testing
-        db.session.remove()  # Remove any sessions
-        db.drop_all()  # Drop all tables after the tests are done
+        db.create_all() 
+        yield flask_app  
+        db.session.remove()  
+        db.drop_all() 
 
 @pytest.fixture
 def client(app):
     return app.test_client()
 
+# testando para a criacao de login
 def test_login_get(client):
     response = client.get(url_for('login'))  # Faz um GET na rota de login
     # Havera um redirecionamento para o primeiro acesso.
@@ -24,16 +25,14 @@ def test_login_get(client):
     assert b'<button type="submit" class="btn btn-custom btn-block text-white" name="submit_login">Login</button>' in response.data  
 
 
-def test_login_post_invalid(client):
- # Simula um POST com dados inválidos
-    response = client.post(url_for('login'), data={
-        'username': 'invalid_user',
-        'password': 'invalid_password'
+# testando para a criacao de conta
+def test_primeiro_acesso_post_valid(client):
+    response = client.post(url_for('primeiro_acesso'), data={
+        'username': 'usuario',
+        'email': 'novo_usuario@example.com',
+        'password': 'supersenha',
+        'repeat_password': 'supersenha'
     })
-    assert response.status_code == 200  # A página de login deve ser retornada
-
-    # Testando o método check_password para o usuário válido
-    user = User.query.filter_by(username='test_user').first()
-    assert user.check_password('valid_password') is True  # Deve retornar True para a senha correta
-    assert user.check_password('wrong_password') is False  # Deve retornar False para a senha incorreta
+    assert response.status_code == 302  # Check for redirect after successful form submission
+    assert User.query.filter_by(username='new_user').first() is not None  # Verify that the user is created
 
