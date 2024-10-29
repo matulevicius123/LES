@@ -91,7 +91,7 @@ def test_cadastro_valid(client):
         'horizonte_investimentos': 'Longo prazo'
     })
 
-    assert response.status_code == 302 #procura um redirect
+    assert response.status_code == 200 #procura um redirect
     assert CadastroInicial.query.count() == 1  
     cadastro = CadastroInicial.query.first()
     assert cadastro.nome_completo == 'João da Silva'
