@@ -30,7 +30,7 @@ def test_login_get(client):
 # testando para a criacao de conta
 def test_primeiro_acesso_post_valid(client):
     response = client.get(url_for('primeiro_acesso'))
-    csrf_token = response.data.decode().split('name="csrf_token" value="')[1].split('"')[0]
+    #csrf_token = response.data.decode().split('name="csrf_token" value="')[1].split('"')[0]
 
     response = client.post(url_for('primeiro_acesso'), data={
         'username': 'usuario',
