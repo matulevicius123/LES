@@ -18,7 +18,11 @@ def client(app):
 
 def test_login_get(client):
     response = client.get(url_for('login'))  # Faz um GET na rota de login
-    assert b"Criar uma nova conta" in response.data
+    # Havera um redirecionamento para o primeiro acesso.
+    print(response.data.decode('utf-8'))  # Print the HTML response for debugging
+    assert response.status_code == 302  
+    assert b"Criar uma nova conta" in response.data 
+
 
 def test_login_post_invalid(client):
  # Simula um POST com dados inválidos
