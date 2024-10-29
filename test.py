@@ -18,7 +18,7 @@ def client(app):
 
 def test_login_get(client):
     response = client.get(url_for('login'))  # Faz um GET na rota de login
-        assert b"Criar uma nova conta" in response.data
+    assert b"Criar uma nova conta" in response.data
 
 def test_login_post_invalid(client):
  # Simula um POST com dados inválidos
