@@ -5,6 +5,14 @@ from extensions import db
 from models import User
 from forms import PrimeiroAcessoForm
 
+def extract_csrf_token(html):
+    # Find the start of the CSRF token
+    start = html.find('"hidden" value="') + len('"hidden" value="')
+    # Find the end of the CSRF token
+    end = html.find('"', start)
+    # Extract and return the CSRF token
+    return html[start:end]
+
 
 @pytest.fixture
 def app():
@@ -30,14 +38,21 @@ def test_login_get(client):
 # testando para a criacao de conta
 def test_primeiro_acesso_post_valid(client):
     response = client.get(url_for('primeiro_acesso'))
-    #csrf_token = response.data.decode().split('name="csrf_token" value="')[1].split('"')[0]
+    response_data = response.data.decode()
+
+    # Use the correct substring to find the CSRF token
+    start = response_data.find('name="csrf_token" value="') + len('name="csrf_token" value="')
+    end = response_data.find('"', start)
+
+    # Extract the CSRF token correctly
+    csrf_token = response_data[start:end]  # Use response_data instead of html
 
     response = client.post(url_for('primeiro_acesso'), data={
         'username': 'usuario',
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
-        'repeat_password': 'supersenha'
-        #'csrf_token': csrf_token  
+        'repeat_password': 'supersenha',
+        'csrf_token': csrf_token  
     })
 
     #print(User.query.all()) 
@@ -48,8 +63,8 @@ def test_primeiro_acesso_post_valid(client):
         'username': 'usuario',
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
-        'repeat_password': 'supersenha'
-        #'csrf_token': csrf_token  
+        'repeat_password': 'supersenha',
+        'csrf_token': csrf_token  
     })
     
     if not form.validate():
