@@ -77,3 +77,23 @@ def test_login_com_conta_nova(client):
     assert response.status_code == 200 
     print("Login response status code:", response.status_code)
     print("Login response data:", response.data.decode())
+
+def test_cadastro_valid(client):
+    response = client.post(url_for('cadastro'), data={
+        'nome_completo': 'Jack da Silva',
+        'idade': 30,
+        'renda_mensal': '5000.00',  
+        'despesas_mensais': '3000.00',
+        'patrimonio_atual': '10000.00',
+        'idade_desejada_aposentadoria': 60,
+        'renda_desejada_aposentadoria': '8000.00',
+        'tolerancia_risco': 'Alto',
+        'horizonte_investimentos': 'Longo prazo'
+    })
+
+    assert response.status_code == 302 #procura um redirect
+    assert CadastroInicial.query.count() == 1  
+    cadastro = CadastroInicial.query.first()
+    assert cadastro.nome_completo == 'João da Silva'
+    assert cadastro.idade == 30
+
