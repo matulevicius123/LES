@@ -55,7 +55,10 @@ def test_primeiro_acesso_post_valid(client):
         'csrf_token': csrf_token  
     })
 
-    print(User.query.all()) 
+    users = User.query.all()
+    print("Current users in the database:")
+    for user in users:
+        print(f"User: {user.username}, Email: {user.email}, Password Hash: {user.password}") 
     #print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
 
      # Check if form validation failed
