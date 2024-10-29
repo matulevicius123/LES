@@ -41,7 +41,7 @@ def test_primeiro_acesso_post_valid(client):
     response_data = response.data.decode()
 
     # Use the correct substring to find the CSRF token
-    start = response_data.find('name="csrf_token" value="') + len('name="csrf_token" value="')
+    start = response_data.find('"hidden" value="') + len('"hidden" value="')
     end = response_data.find('"', start)
 
     # Extract the CSRF token correctly
