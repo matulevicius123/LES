@@ -33,6 +33,7 @@ def test_primeiro_acesso_post_valid(client):
         'password': 'supersenha',
         'repeat_password': 'supersenha'
     })
+    print(User.query.all()) 
     user = User.query.filter_by(username='usuario').first() 
     assert user is not None  # verificar se o usuario existe
 
