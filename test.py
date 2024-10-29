@@ -67,6 +67,8 @@ def test_primeiro_acesso_post_valid(client):
         'csrf_token': csrf_token  
     })
     
+    print("Extracted CSRF Token:", csrf_token)  # Debugging output
+
     if not form.validate():
         print(form.errors)  # Print form errors if validation fails
         
