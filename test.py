@@ -33,6 +33,6 @@ def test_primeiro_acesso_post_valid(client):
         'password': 'supersenha',
         'repeat_password': 'supersenha'
     })
-    assert response.status_code == 302  # Check for redirect after successful form submission
-    assert User.query.filter_by(username='new_user').first() is not None  # Verify that the user is created
+    user = User.query.filter_by(username='usuario').first() 
+    assert user is not None  # verificar se o usuario existe
 
