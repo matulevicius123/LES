@@ -35,8 +35,8 @@ def test_primeiro_acesso_post_valid(client):
         'password': 'supersenha',
         'repeat_password': 'supersenha'
     })
-    print(User.query.all()) 
-    print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
+    #print(User.query.all()) 
+    #print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
 
         # Check if form validation failed
     form = PrimeiroAcessoForm(data={
