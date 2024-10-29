@@ -56,25 +56,27 @@ def test_primeiro_acesso_post_valid(client):
     })
 
     users = User.query.all()
-    print("Current users in the database:")
-    for user in users:
-        print(f"User: {user.username}, Email: {user.email}, Password Hash: {user.password}") 
+    #print("Current users in the database:")
+    #for user in users:
+    #    print(f"User: {user.username}, Email: {user.email}, Password Hash: {user.password}") 
     #print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
-
-     # Check if form validation failed
-    form = PrimeiroAcessoForm(data={
-        'username': 'usuario',
-        'email': 'novo_usuario@example.com',
-        'password': 'supersenha',
-        'repeat_password': 'supersenha',
-        'csrf_token': csrf_token  
-    })
     
-    print("Extracted CSRF Token:", csrf_token)  # Debugging output
+    #print("Extracted CSRF Token:", csrf_token)  # Debugging output
 
     if not form.validate():
         print(form.errors)  # Print form errors if validation fails
         
     user = User.query.filter_by(username='usuario').first() 
     assert user is not None  # verificar se o usuario existe
-
+    
+def test_login_com_conta_nova(client):
+    response = client.post(url_for('login'), data={
+        'username': 'usuario',
+        'password': 'supersenha'
+    })
+    
+    # Check if login was successful by asserting redirection or a specific message
+    assert response.status_code == 302  # Typically redirects to 'home'
+    # Optionally check for a session state, flash message, or user authentication
+    print("Login response status code:", response.status_code)
+    print("Login response data:", response.data.decode())
