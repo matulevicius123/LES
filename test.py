@@ -1,6 +1,6 @@
 import pytest
 from flask import url_for
-from testapp import test app as flask_app  # Importa o app do seu arquivo
+from testapp import testapp as flask_app  # Importa o app do seu arquivo
 from extensions import db
 from models import User
 
