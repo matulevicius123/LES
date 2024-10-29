@@ -36,8 +36,8 @@ def test_primeiro_acesso_post_valid(client):
         'username': 'usuario',
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
-        'repeat_password': 'supersenha',
-        'csrf_token': csrf_token  
+        'repeat_password': 'supersenha'
+        #'csrf_token': csrf_token  
     })
 
     #print(User.query.all()) 
@@ -48,8 +48,8 @@ def test_primeiro_acesso_post_valid(client):
         'username': 'usuario',
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
-        'repeat_password': 'supersenha',
-        'csrf_token': csrf_token  
+        'repeat_password': 'supersenha'
+        #'csrf_token': csrf_token  
     })
     
     if not form.validate():
