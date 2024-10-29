@@ -29,12 +29,17 @@ def test_login_get(client):
 
 # testando para a criacao de conta
 def test_primeiro_acesso_post_valid(client):
+    response = client.get(url_for('primeiro_acesso'))
+    csrf_token = response.form['csrf_token']
+
     response = client.post(url_for('primeiro_acesso'), data={
         'username': 'usuario',
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
-        'repeat_password': 'supersenha'
+        'repeat_password': 'supersenha',
+        'csrf_token': csrf_token  
     })
+
     #print(User.query.all()) 
     #print(response.data.decode('utf-8'))  # Decode to convert bytes to a string
 
@@ -44,6 +49,7 @@ def test_primeiro_acesso_post_valid(client):
         'email': 'novo_usuario@example.com',
         'password': 'supersenha',
         'repeat_password': 'supersenha'
+        'csrf_token': csrf_token  
     })
     
     if not form.validate():
