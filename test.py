@@ -5,6 +5,8 @@ from extensions import db
 from models import User
 from models import CadastroInicial
 from forms import PrimeiroAcessoForm
+from forms import CadastroInicialForm
+
 
 @pytest.fixture
 def app():
