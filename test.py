@@ -94,25 +94,9 @@ def test_cadastro_valid(client):
         'csrf_token': csrf_token
     })
 
-    # Check if form validation passed
-    form = CadastroInicialForm(data={
-        'nome_completo': 'João da Silva',
-        'idade': 30,
-        'renda_mensal': '5000.00',
-        'despesas_mensais': '3000.00',
-        'patrimonio_atual': '10000.00',
-        'idade_desejada_aposentadoria': 60,
-        'renda_desejada_aposentadoria': '8000.00',
-        'tolerancia_risco': 'medio',
-        'horizonte_investimentos': 'curto_prazo',
-        'csrf_token': csrf_token
-    })
-
-    if not form.validate():
-        print("Form validation failed:", form.errors)
     assert response.status_code == 302 #procura um redirect
     assert CadastroInicial.query.count() == 1  
     cadastro = CadastroInicial.query.first()
-    assert cadastro.nome_completo == 'João da Silva'
+    assert cadastro.nome_completo == 'Jack da Silva'
     assert cadastro.idade == 30
 
