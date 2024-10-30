@@ -75,7 +75,11 @@ def test_login_com_conta_nova(client):
 def test_cadastro_valid(client):
     response = client.get(url_for('primeiro_acesso'))
     response_data = response.data.decode()
-    print(response.data.decode('utf-8'))
+
+    start = response_data.find('"hidden" value="') + len('"hidden" value="')
+    end = response_data.find('"', start)
+
+    csrf_token = response_data[start:end] 
     
     response = client.post(url_for('cadastro'), data={
         'nome_completo': 'Jack da Silva',
@@ -86,7 +90,8 @@ def test_cadastro_valid(client):
         'idade_desejada_aposentadoria': 60,
         'renda_desejada_aposentadoria': '8000.00',
         'tolerancia_risco': 'medio',
-        'horizonte_investimentos': 'curto_prazo'
+        'horizonte_investimentos': 'curto_prazo',
+        'csrf_token': csrf_token
     })
 
     # Check if form validation passed
@@ -99,7 +104,8 @@ def test_cadastro_valid(client):
         'idade_desejada_aposentadoria': 60,
         'renda_desejada_aposentadoria': '8000.00',
         'tolerancia_risco': 'medio',
-        'horizonte_investimentos': 'curto_prazo'
+        'horizonte_investimentos': 'curto_prazo',
+        'csrf_token': csrf_token
     })
 
     if not form.validate():
