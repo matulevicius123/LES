@@ -73,6 +73,10 @@ def test_login_com_conta_nova(client):
     #print("Login response data:", response.data.decode())
 
 def test_cadastro_valid(client):
+    response = client.get(url_for('primeiro_acesso'))
+    response_data = response.data.decode()
+    print(response.data.decode('utf-8'))
+    
     response = client.post(url_for('cadastro'), data={
         'nome_completo': 'Jack da Silva',
         'idade': 30,
