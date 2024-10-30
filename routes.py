@@ -65,6 +65,9 @@ def init_routes(app):
 
     @app.route('/')
     def home():
+        if  not current_user.is_authenticated:
+            flash('Faça login para acessar a página.', 'danger')
+            return redirect(url_for('login'))
         return render_template('home.html')  # Renderiza o template da página inicial
 
 
@@ -92,27 +95,7 @@ def init_routes(app):
             
             idade_atual = form.idade.data
             idade_aposentadoria = form.idade_desejada_aposentadoria.data
-            inflacao_anual = 0.04  # Supondo uma inflação anual de 4%
-            rentabilidade_mensal = 0.008  # Supondo uma rentabilidade líquida de 0.8% ao mês
-            
-            # Cálculo do quanto a pessoa precisa poupar por mês, considerando o patrimônio atual
-            poupanca_mensal, valor_a_ser_acumulado, valor_necessario_aposentadoria = calcular_poupanca_mensal_com_patrimonio(
-                idade_atual, idade_aposentadoria, renda_desejada_aposentadoria, inflacao_anual, rentabilidade_mensal, patrimonio_atual
-            )
 
-            # Verifica se a renda atual está compatível com a aposentadoria desejada
-            if renda_mensal - despesas_mensais < poupanca_mensal:
-                feedback = (
-                    f"Sua renda mensal de R$ {renda_mensal:.2f} menos suas despesas de R$ {despesas_mensais:.2f} "
-                    f"não permite poupar o suficiente para atingir sua renda desejada de R$ {renda_desejada_aposentadoria:.2f} "
-                    f"na aposentadoria. Você precisaria poupar R$ {poupanca_mensal:.2f} por mês."
-                )
-            else:
-                feedback = (
-                    f"Com sua renda atual e despesas, você pode atingir sua renda desejada de R$ {renda_desejada_aposentadoria:.2f} "
-                    f"na aposentadoria. Você precisa guardar R$ {poupanca_mensal:.2f} por mês até a idade de {idade_aposentadoria} "
-                    f"para acumular o valor necessário de R$ {valor_necessario_aposentadoria:.2f}."
-                )
 
             # Criar novo cadastro
             novo_cadastro = CadastroInicial(
@@ -130,7 +113,6 @@ def init_routes(app):
             db.session.add(novo_cadastro)
             db.session.commit()
 
-            flash(feedback, 'info')
             return redirect(url_for('home'))  # Redireciona para a página inicial
 
         return render_template('cadastro.html', form=form)
