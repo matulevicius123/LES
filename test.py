@@ -24,7 +24,7 @@ def client(app):
 def test_login_get(client):
     response = client.get(url_for('login'))  # Faz um GET na rota de login
     # Havera um redirecionamento para o primeiro acesso.
-    print(response.data.decode('utf-8'))  # Print the HTML response for debugging
+    #print(response.data.decode('utf-8'))  # Print the HTML response for debugging
     assert response.status_code == 200  
     assert b'<button type="submit" class="btn btn-custom btn-block text-white" name="submit_login">Login</button>' in response.data  
 
@@ -81,8 +81,8 @@ def test_cadastro_valid(client):
         'patrimonio_atual': '10000.00',
         'idade_desejada_aposentadoria': 60,
         'renda_desejada_aposentadoria': '8000.00',
-        'tolerancia_risco': 'Alto',
-        'horizonte_investimentos': 'Longo prazo'
+        'tolerancia_risco': 'medio',
+        'horizonte_investimentos': 'curto_prazo'
     })
 
     # Check if form validation passed
@@ -94,8 +94,8 @@ def test_cadastro_valid(client):
         'patrimonio_atual': '10000.00',
         'idade_desejada_aposentadoria': 60,
         'renda_desejada_aposentadoria': '8000.00',
-        'tolerancia_risco': 'Alto',
-        'horizonte_investimentos': 'Longo prazo'
+        'tolerancia_risco': 'medio',
+        'horizonte_investimentos': 'curto_prazo'
     })
 
     if not form.validate():
