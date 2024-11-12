@@ -1,6 +1,14 @@
 import math
 
-def calcular_poupanca_mensal_com_patrimonio(idade_atual, idade_aposentadoria, renda_desejada_aposentadoria, inflacao_anual, rentabilidade_mensal, patrimonio_atual):
+def calcular_poupanca_mensal_com_patrimonio(
+    idade_atual, 
+    idade_aposentadoria, 
+    renda_desejada_aposentadoria, 
+    inflacao_anual, 
+    rentabilidade_mensal, 
+    patrimonio_atual, 
+    poupanca_mensal=0
+):
     # Cálculo do número de meses até a aposentadoria
     meses_ate_aposentadoria = (idade_aposentadoria - idade_atual) * 12
 
@@ -10,6 +18,10 @@ def calcular_poupanca_mensal_com_patrimonio(idade_atual, idade_aposentadoria, re
 
     # Ajuste do patrimônio atual pela rentabilidade mensal ao longo do tempo
     patrimonio_futuro = patrimonio_atual * (1 + rentabilidade_mensal) ** meses_ate_aposentadoria
+
+    # Cálculo do patrimônio futuro considerando as poupanças mensais
+    if poupanca_mensal > 0:
+        patrimonio_futuro += poupanca_mensal * ((1 + rentabilidade_mensal) ** meses_ate_aposentadoria - 1) / rentabilidade_mensal
 
     # Fórmula do valor futuro para calcular o valor necessário acumulado
     # Supondo que a pessoa viverá 30 anos após a aposentadoria
@@ -21,10 +33,10 @@ def calcular_poupanca_mensal_com_patrimonio(idade_atual, idade_aposentadoria, re
     valor_a_ser_acumulado = max(0, valor_necessario_aposentadoria - patrimonio_futuro)
 
     if valor_a_ser_acumulado == 0:
-        poupanca_mensal = 0
+        poupanca_mensal_nova = 0
     else:
         # Fórmula do valor futuro de uma série de pagamentos para calcular a poupança mensal necessária
         fator_poupanca = ((1 + rentabilidade_mensal) ** meses_ate_aposentadoria - 1) / rentabilidade_mensal
-        poupanca_mensal = valor_a_ser_acumulado / fator_poupanca
+        poupanca_mensal_nova = valor_a_ser_acumulado / fator_poupanca
 
-    return poupanca_mensal, valor_a_ser_acumulado, valor_necessario_aposentadoria, patrimonio_futuro
+    return poupanca_mensal_nova, valor_a_ser_acumulado, valor_necessario_aposentadoria, patrimonio_futuro

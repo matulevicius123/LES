@@ -68,6 +68,15 @@
                                 {% endif %}
                             </td>
                         </tr>
+                        <!-- Informações sobre o Investimento -->
+                        <tr>
+                            <th scope="row">Tipo de Investimento</th>
+                            <td>{{ feedback.tipo_investimento }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Rentabilidade Mensal Utilizada</th>
+                            <td>{{ feedback.rentabilidade_mensal }}</td>
+                        </tr>
                     </tbody>
                 </table>
                 <h5>Recomendação</h5>
@@ -75,7 +84,7 @@
             </div>
         </div>
     </div>
-{% endif %}
+    {% endif %}
 
         <!-- Nome Completo (Readonly) -->
         <div class="form-group">

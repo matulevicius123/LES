@@ -2,11 +2,11 @@ import random
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 from calculate_aposentadoria import calcular_poupanca_mensal_com_patrimonio
-from models import User  # Importar o modelo de usuário
+from models import User, CadastroInicial  # Importar o modelo de usuário e cadastro
 from forms import CadastroInicialForm, LoginForm, PrimeiroAcessoForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from extensions import db  # Importa o db do extensions
-from models import CadastroInicial
+
 def init_routes(app):
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -65,11 +65,10 @@ def init_routes(app):
 
     @app.route('/')
     def home():
-        if  not current_user.is_authenticated:
+        if not current_user.is_authenticated:
             flash('Faça login para acessar a página.', 'danger')
             return redirect(url_for('login'))
         return render_template('home.html')  # Renderiza o template da página inicial
-
 
     def format_currency(value):
         """
@@ -95,7 +94,6 @@ def init_routes(app):
             
             idade_atual = form.idade.data
             idade_aposentadoria = form.idade_desejada_aposentadoria.data
-
 
             # Criar novo cadastro
             novo_cadastro = CadastroInicial(
@@ -131,6 +129,7 @@ def init_routes(app):
         # Formata o número com duas casas decimais, substituindo pontos por vírgulas e adicionando separadores de milhares
         formatted = f"R$ {value:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
         return formatted
+
     @app.route('/simulador_aposentadoria', methods=['GET', 'POST'])
     @login_required
     def simulador_aposentadoria():
@@ -166,8 +165,25 @@ def init_routes(app):
             
             idade_atual = form.idade.data
             idade_aposentadoria = form.idade_desejada_aposentadoria.data
+            tolerancia_risco = form.tolerancia_risco.data
+
+            # Definir a rentabilidade mensal com base na tolerância ao risco
+            # Definir a rentabilidade mensal com base na tolerância ao risco
+            if tolerancia_risco == 'baixo':
+                rentabilidade_mensal = 0.008  # 0,3% ao mês
+                tipo_investimento = "Investimento Conservador (equivalente ao CDI)"
+            elif tolerancia_risco == 'medio':
+                rentabilidade_mensal = 0.01  # 0,5% ao mês
+                tipo_investimento = "Investimento Moderado (50% em Ações e 50% em CDI)"
+            elif tolerancia_risco == 'alto':
+                rentabilidade_mensal = 0.012  # 0,7% ao mês
+                tipo_investimento = "Investimento Agressivo (predominância em Ações)"
+            else:
+                rentabilidade_mensal = 0.003
+                tipo_investimento = "Investimento Conservador (equivalente ao CDI)"
+
+
             inflacao_anual = 0.04  # 4% ao ano
-            rentabilidade_mensal = 0.005  # 0,5% ao mês
             
             # Cálculo do quanto a pessoa precisa poupar por mês, considerando o patrimônio atual
             poupanca_mensal, valor_a_ser_acumulado, valor_necessario_aposentadoria, patrimonio_futuro = calcular_poupanca_mensal_com_patrimonio(
@@ -194,14 +210,19 @@ def init_routes(app):
                 viabilidade = "Viável"
                 recomendacao = (
                     "Com sua renda atual e despesas, você pode atingir sua renda desejada na aposentadoria. "
-                    f"Você precisa guardar R$ {poupanca_mensal_formatada} por mês, aumentando essa poupança anualmente conforme a inflação, "
-                    f"até a idade de {idade_aposentadoria} para acumular o valor necessário de {valor_necessario_formatado}."
+                    f"Você precisa guardar {poupanca_mensal_formatada} por mês, aumentando essa poupança anualmente conforme a inflação, "
+                    f"até a idade de {idade_aposentadoria} para acumular o valor necessário de {valor_necessario_formatado}.\n\n"
+                    f"Estratégia de Investimento Considerada: {tipo_investimento}. A rentabilidade mensal utilizada foi de "
+                    f"{rentabilidade_mensal * 100:.2f}%."
                 )
             else:
                 viabilidade = "Não Viável"
                 recomendacao = (
-                    f"Considerando sua renda disponível de {renda_disponivel_formatada} não permite poupar o suficiente para atingir sua renda desejada de "
-                    f"{format_brl(renda_desejada_aposentadoria)} na aposentadoria. Você precisaria poupar R$ {poupanca_mensal_formatada} por mês."
+                    f"Considerando sua renda disponível de {renda_disponivel_formatada}, não é possível poupar o suficiente para atingir sua "
+                    f"renda desejada de {format_brl(renda_desejada_aposentadoria)} na aposentadoria. Você precisaria poupar {poupanca_mensal_formatada} "
+                    f"por mês.\n\n"
+                    f"Estratégia de Investimento Considerada: {tipo_investimento}. A rentabilidade mensal utilizada foi de "
+                    f"{rentabilidade_mensal * 100:.2f}%."
                 )
             
             # Criação do relatório com todas as informações
@@ -210,6 +231,7 @@ def init_routes(app):
                 'idade_aposentadoria': idade_aposentadoria,
                 'renda_mensal': format_brl(renda_mensal),
                 'despesas_mensais': format_brl(despesas_mensais),
+                'renda_disponivel': renda_disponivel_formatada,
                 'patrimonio_atual': format_brl(patrimonio_atual),
                 'patrimonio_futuro': patrimonio_futuro_formatado,
                 'renda_desejada_aposentadoria': format_brl(renda_desejada_aposentadoria),
@@ -218,7 +240,8 @@ def init_routes(app):
                 'poupanca_mensal': poupanca_mensal_formatada,
                 'viabilidade': viabilidade,
                 'recomendacao': recomendacao,
-                'renda_disponivel': renda_disponivel_formatada
+                'tipo_investimento': tipo_investimento,
+                'rentabilidade_mensal': f"{rentabilidade_mensal * 100:.2f}% ao mês"
             }
 
             # Atualizar o cadastro com os novos dados
@@ -229,7 +252,7 @@ def init_routes(app):
             cadastro.patrimonio_atual = patrimonio_atual
             cadastro.idade_desejada_aposentadoria = idade_aposentadoria
             cadastro.renda_desejada_aposentadoria = renda_desejada_aposentadoria
-            cadastro.tolerancia_risco = form.tolerancia_risco.data
+            cadastro.tolerancia_risco = tolerancia_risco
             cadastro.horizonte_investimentos = form.horizonte_investimentos.data
 
             db.session.commit()
